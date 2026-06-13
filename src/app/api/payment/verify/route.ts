@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import crypto from "crypto";
 import { auth } from "@clerk/nextjs/server";
-import { supabaseClient } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase";
 
 export async function POST(req: Request) {
   try {
@@ -26,7 +26,7 @@ export async function POST(req: Request) {
     }
 
     // Update user in Supabase to grant premium access
-    const { error: dbError } = await supabaseClient
+    const { error: dbError } = await supabase
       .from("users")
       .upsert({ id: userId, has_paid: true, updated_at: new Date().toISOString() });
 

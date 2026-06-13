@@ -8,8 +8,10 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const userId = "mock_admin_id"; // Bypassing auth for UI preview
+  const { userId } = await auth();
 
+  // In a real app, verify this userId belongs to an Admin role from your DB
+  // For now, if no userId, redirect to sign in.
   if (!userId) {
     redirect("/sign-in");
   }

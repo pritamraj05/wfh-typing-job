@@ -8,7 +8,7 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const userId = "mock_user_id"; // Bypassing auth for UI preview
+  const { userId } = await auth();
 
   if (!userId) {
     redirect("/sign-in");

@@ -16,20 +16,21 @@
 }
 
 :root {
-  --background: #ffffff; /* Pure white */
-  --foreground: #0f172a; /* Slate 900 for high contrast text */
-  --primary: #4f46e5; /* Modern Indigo 600 */
+  --background: transparent;
+  --foreground: #1e293b; /* Slate 800 */
+  --primary: #4f46e5; /* Indigo 600 */
   --primary-foreground: #ffffff;
-  --muted: #f8fafc; /* Slate 50 */
-  --muted-foreground: #64748b; /* Slate 500 */
-  --accent: #10b981; /* Emerald 500 */
+  --muted: rgba(255, 255, 255, 0.5);
+  --muted-foreground: #475569; /* Slate 600 */
+  --accent: #059669; /* Emerald 600 */
   --accent-foreground: #ffffff;
-  --border: #e2e8f0; /* Slate 200 */
-  --card: #ffffff;
+  --border: rgba(255, 255, 255, 0.4);
+  --card: rgba(255, 255, 255, 0.4);
 }
 
 body {
-  background: var(--background);
+  background: linear-gradient(135deg, #e0e7ff 0%, #ede9fe 50%, #ccfbf1 100%);
+  background-attachment: fixed;
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;

@@ -16,16 +16,16 @@
 }
 
 :root {
-  --background: #000000;
-  --foreground: #ffffff;
-  --primary: #3b82f6; /* Blue 500 */
+  --background: #ffffff;
+  --foreground: #0f172a;
+  --primary: #1e3a8a; /* Royal Blue */
   --primary-foreground: #ffffff;
-  --muted: #171717;
-  --muted-foreground: #a3a3a3;
-  --accent: #1e40af;
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
+  --accent: #eab308; /* Royal Gold */
   --accent-foreground: #ffffff;
-  --border: #262626;
-  --card: #0a0a0a;
+  --border: #e2e8f0;
+  --card: #ffffff;
 }
 
 body {
@@ -38,18 +38,19 @@ body {
 
 /* Glassmorphism Utilities */
 .glass {
-  background: rgba(20, 20, 20, 0.4);
+  background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .glass-card {
-  background: rgba(30, 30, 30, 0.5);
+  background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.05);
   border-radius: 1rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
 }
 
 /* Smooth scrolling */

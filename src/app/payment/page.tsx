@@ -3,24 +3,79 @@
 import { motion } from "framer-motion";
 import { Lock, ShieldCheck, CreditCard, ArrowRight } from "lucide-react";
 import { useState } from "react";
+import Script from "next/script";
+import { useRouter } from "next/navigation";
 
 export default function PaymentGatePage() {
   const [isLoading, setIsLoading] = useState(false);
 
+  const router = useRouter();
+
   const handlePayment = async () => {
     setIsLoading(true);
-    // TODO: Integrate Razorpay order creation API here
     
-    // Simulating Razorpay checkout popup delay
-    setTimeout(() => {
+    try {
+      const res = await fetch("/api/payment/create-order", { method: "POST" });
+      const orderData = await res.json();
+
+      if (orderData.error) {
+        alert("Failed to initialize payment: " + orderData.error);
+        setIsLoading(false);
+        return;
+      }
+
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "test_key",
+        amount: orderData.amount,
+        currency: orderData.currency,
+        name: "Premium Platform Access",
+        description: "Lifetime Access Security Deposit",
+        order_id: orderData.id,
+        handler: async function (response: any) {
+          const verifyRes = await fetch("/api/payment/verify", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_signature: response.razorpay_signature,
+            }),
+          });
+
+          if (verifyRes.ok) {
+            router.push("/dashboard");
+          } else {
+            alert("Payment verification failed.");
+            setIsLoading(false);
+          }
+        },
+        prefill: {
+          name: "User",
+          email: "user@example.com",
+        },
+        theme: {
+          color: "#ffffff",
+        },
+      };
+
+      const rzp = new (window as any).Razorpay(options);
+      rzp.on("payment.failed", function (response: any) {
+        alert("Payment Failed: " + response.error.description);
+        setIsLoading(false);
+      });
+      rzp.open();
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong");
       setIsLoading(false);
-      alert("Razorpay Checkout will open here. Backend integration required for Order ID.");
-    }, 1500);
+    }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4 relative overflow-hidden">
-      <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-primary/10 blur-[120px] pointer-events-none" />
+    <>
+      <Script src="https://checkout.razorpay.com/v1/checkout.js" />
+      <div className="min-h-screen flex items-center justify-center bg-background p-4 relative overflow-hidden">
+        <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-primary/10 blur-[120px] pointer-events-none" />
       
       <motion.div 
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -77,6 +132,7 @@ export default function PaymentGatePage() {
           <ShieldCheck className="w-4 h-4" /> Secure 256-bit encrypted checkout
         </p>
       </motion.div>
-    </div>
+      </div>
+    </>
   );
 }

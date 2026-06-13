@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, CheckCircle2, ShieldCheck, Wallet, Banknote } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import { useAuth, UserButton } from "@clerk/nextjs";
 
 const LIVE_NOTIFICATIONS = [
   "Rahul just withdrew ₹500",
@@ -16,6 +16,7 @@ const LIVE_NOTIFICATIONS = [
 
 export default function LandingPage() {
   const [tickerText, setTickerText] = useState(LIVE_NOTIFICATIONS[0]);
+  const { isSignedIn, isLoaded } = useAuth();
 
   useEffect(() => {
     let i = 0;
@@ -34,17 +35,20 @@ export default function LandingPage() {
           MicroDesk
         </div>
         <div className="flex items-center gap-6">
-          <SignedIn>
-            <Link href="/dashboard" className="text-sm font-semibold hover:text-primary transition-colors">
-              Dashboard
-            </Link>
-            <UserButton afterSignOutUrl="/" />
-          </SignedIn>
-          <SignedOut>
-            <Link href="/sign-in" className="text-sm font-semibold hover:text-primary transition-colors">
-              Login
-            </Link>
-          </SignedOut>
+          {isLoaded && isSignedIn ? (
+            <>
+              <Link href="/dashboard" className="text-sm font-semibold hover:text-primary transition-colors">
+                Dashboard
+              </Link>
+              <UserButton afterSignOutUrl="/" />
+            </>
+          ) : (
+            isLoaded && (
+              <Link href="/sign-in" className="text-sm font-semibold hover:text-primary transition-colors">
+                Login
+              </Link>
+            )
+          )}
         </div>
       </nav>
 
@@ -91,22 +95,22 @@ export default function LandingPage() {
             A premium, invite-only micro-tasking platform where your typing skills translate directly into instant payouts. No scams, just pure work.
           </p>
 
-          <SignedOut>
+          {isLoaded && !isSignedIn && (
             <Link href="/sign-up">
               <button className="group relative inline-flex items-center gap-2 px-8 py-4 bg-primary text-primary-foreground rounded-full text-lg font-semibold hover:bg-primary/90 transition-all duration-300 hover:scale-105 active:scale-95 shadow-[0_0_40px_-10px_rgba(59,130,246,0.5)]">
                 Get Started Now
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </button>
             </Link>
-          </SignedOut>
-          <SignedIn>
+          )}
+          {isLoaded && isSignedIn && (
             <Link href="/dashboard">
               <button className="group relative inline-flex items-center gap-2 px-8 py-4 bg-accent text-accent-foreground rounded-full text-lg font-semibold hover:bg-accent/90 transition-all duration-300 hover:scale-105 active:scale-95 shadow-[0_0_40px_-10px_rgba(217,119,6,0.5)]">
                 Go to Dashboard
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </button>
             </Link>
-          </SignedIn>
+          )}
         </motion.div>
 
         {/* How it Works Section */}

@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { LayoutDashboard, CheckSquare, Wallet, User as UserIcon } from "lucide-react";
 import Link from "next/link";
+import { supabase } from "@/lib/supabase";
 
 export default async function DashboardLayout({
   children,
@@ -12,6 +13,17 @@ export default async function DashboardLayout({
 
   if (!userId) {
     redirect("/sign-in");
+  }
+
+  // Strict Payment Enforcement
+  const { data: user } = await supabase
+    .from("users")
+    .select("has_paid")
+    .eq("id", userId)
+    .single();
+
+  if (!user?.has_paid) {
+    redirect("/payment");
   }
 
   return (

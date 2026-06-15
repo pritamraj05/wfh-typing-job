@@ -21,7 +21,7 @@ export async function POST() {
     const options = {
       amount,
       currency: "INR",
-      receipt: `receipt_${userId}_${Date.now()}`,
+      receipt: `rcpt_${userId.slice(-8)}_${Date.now()}`.slice(0, 40),
       payment_capture: 1, // Auto capture
     };
 

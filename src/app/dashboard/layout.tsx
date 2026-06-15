@@ -15,14 +15,20 @@ export default async function DashboardLayout({
     redirect("/sign-in");
   }
 
-  // Strict Payment Enforcement
+  // Strict Flow Enforcement
   const { data: user } = await supabase
     .from("users")
-    .select("has_paid")
+    .select("full_name, has_paid")
     .eq("id", userId)
     .single();
 
-  if (!user?.has_paid) {
+  if (!user || !user.full_name) {
+    // Force them to fill the onboarding form first
+    redirect("/onboarding");
+  }
+
+  if (!user.has_paid) {
+    // Force them to pay after filling the form
     redirect("/payment");
   }
 

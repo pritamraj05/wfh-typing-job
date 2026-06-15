@@ -1,10 +1,26 @@
 import { ShieldAlert } from "lucide-react";
 import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 
 const ADMIN_EMAILS = ["ag9988228889@gmail.com"];
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+  // 1. Extreme Security: Check Device Footprint Cookie
+  const cookieStore = cookies();
+  const deviceFootprint = cookieStore.get('device_footprint_secure');
+  
+  if (!deviceFootprint || deviceFootprint.value !== 'verified_admin_device_x99') {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-black text-red-600 font-mono text-xl p-8 text-center space-y-4">
+        <h1 className="text-4xl font-bold uppercase tracking-widest">Access Denied</h1>
+        <p>Error Code: 0x800A0004</p>
+        <p className="text-sm text-red-900 mt-4">Unrecognized Device Footprint. Connection dropped.</p>
+      </div>
+    );
+  }
+
+  // 2. Auth Security: Check user session and email
   const user = await currentUser();
   
   if (!user) {

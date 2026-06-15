@@ -27,11 +27,6 @@ export default async function DashboardLayout({
     redirect("/onboarding");
   }
 
-  if (!user.has_paid) {
-    // Force them to pay after filling the form
-    redirect("/payment");
-  }
-
   return (
     <div className="min-h-screen flex bg-background">
       {/* Sidebar */}

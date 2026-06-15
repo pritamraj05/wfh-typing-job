@@ -85,8 +85,15 @@ export default async function AdminDashboard() {
             const relatedUser = users?.find(u => u.id === task.user_id);
             return (
               <div key={task.id} className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all">
-                <div className="aspect-video bg-black relative">
-                  <img src={task.photo_url} alt="Verification" className="w-full h-full object-cover opacity-90 hover:opacity-100 transition-opacity" />
+                <div className="aspect-video bg-black relative flex items-center justify-center">
+                  {task.photo_url && task.photo_url.startsWith('data:image') ? (
+                    <img src={task.photo_url} alt="Verification" className="w-full h-full object-cover opacity-90 hover:opacity-100 transition-opacity" />
+                  ) : (
+                    <div className="text-center p-4 flex flex-col items-center">
+                      <CheckCircle2 className="w-10 h-10 text-green-500 mb-2 opacity-80" />
+                      <span className="text-white text-sm font-semibold opacity-80">Sample Task Submitted</span>
+                    </div>
+                  )}
                   <div className="absolute top-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded backdrop-blur-sm">
                     Live Capture
                   </div>

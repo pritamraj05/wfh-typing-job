@@ -45,7 +45,7 @@ export default function OnboardingPage() {
         setErrorMsg(res.error);
         setIsSubmitting(false);
       } else {
-        router.push("/dashboard");
+        router.push("/payment");
       }
     } catch (err: any) {
       console.error(err);

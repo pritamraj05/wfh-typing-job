@@ -19,6 +19,24 @@ export default async function DashboardOverview() {
         <p className="text-muted-foreground">Here's your work overview for today.</p>
       </header>
 
+      {/* Action Required Alert (MOVED TO TOP) */}
+      {!hasPaid && (
+        <div className="glass-card p-6 flex flex-col bg-gradient-to-b from-red-500/10 to-transparent border-red-500/20 mb-8">
+          <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+            <AlertTriangle className="w-5 h-5 text-red-500" />
+            Action Required: Pending Platform Access Fee
+          </h2>
+          <p className="text-sm text-muted-foreground mb-6">
+            Your account is restricted. You must complete the payment to unlock tasks and start working.
+          </p>
+          <Link href="/payment" className="w-full md:w-auto">
+            <button className="w-full md:w-auto px-8 py-3 bg-red-500 hover:bg-red-600 rounded-xl font-bold text-white transition-transform active:scale-95 shadow-[0_0_20px_-5px_rgba(239,68,68,0.5)]">
+              Pay Platform Access Fee (₹1,500)
+            </button>
+          </Link>
+        </div>
+      )}
+
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="glass-card p-6 flex flex-col">
@@ -57,16 +75,14 @@ export default async function DashboardOverview() {
         <div className="glass-card p-6 flex flex-col bg-gradient-to-b from-primary/10 to-transparent border-primary/20">
           <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
             {!hasPaid && <AlertTriangle className="w-5 h-5 text-yellow-500" />}
-            Action Required
+            Verification Required
           </h2>
           <p className="text-sm text-muted-foreground mb-8 flex-1">
-            {!hasPaid 
-              ? "Your account has a pending WFH Security Deposit. You must complete the payment to unlock tasks and start working." 
-              : "You must complete your mandatory live verification task to unlock work."}
+            You must complete your mandatory live verification task to unlock work.
           </p>
-          <Link href={!hasPaid ? "/payment" : "/dashboard/task"}>
-            <button className="w-full py-3 bg-red-500 hover:bg-red-600 rounded-xl font-bold text-white transition-transform active:scale-95 shadow-[0_0_20px_-5px_rgba(239,68,68,0.5)]">
-              {!hasPaid ? "Pay Security Deposit (₹1,500)" : "Start Live Verification Task"}
+          <Link href="/dashboard/task">
+            <button className="w-full py-3 bg-primary hover:bg-primary/90 rounded-xl font-bold text-primary-foreground transition-transform active:scale-95 shadow-lg shadow-primary/20">
+              Start Live Verification Task
             </button>
           </Link>
         </div>

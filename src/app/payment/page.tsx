@@ -95,7 +95,7 @@ export default function PaymentGatePage() {
         <div className="bg-background/50 border border-white/5 rounded-2xl p-6 mb-8 text-left">
           <div className="flex justify-between items-center mb-4 border-b border-white/5 pb-4">
             <span className="text-muted-foreground">Premium Lifetime Access</span>
-            <span className="text-2xl font-bold">₹2</span>
+            <span className="text-2xl font-bold">₹1,500</span>
           </div>
           
           <ul className="space-y-3">

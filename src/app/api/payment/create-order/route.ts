@@ -15,8 +15,8 @@ export async function POST() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Temporary price for testing: ₹1 (in paise)
-    const amount = 1 * 100;
+    // Temporary price for testing: ₹2 (in paise)
+    const amount = 2 * 100;
 
     const options = {
       amount,

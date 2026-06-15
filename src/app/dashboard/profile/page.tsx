@@ -24,6 +24,37 @@ export default async function ProfilePage() {
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* Billing & Status (MOVED TO TOP/FIRST) */}
+        <div className="glass-card p-8 flex flex-col order-first md:order-none">
+          <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
+            <CreditCard className="w-6 h-6 text-primary" />
+            Billing & Status
+          </h3>
+
+          {hasPaid ? (
+            <div className="bg-green-500/10 border border-green-500/20 p-6 rounded-2xl flex-1 flex flex-col items-center justify-center text-center">
+              <CheckCircle className="w-12 h-12 text-green-500 mb-4" />
+              <h4 className="text-lg font-bold text-green-500 mb-2">Account Active</h4>
+              <p className="text-sm text-green-500/80">
+                Your Platform Fee is paid. You have full access to marketing campaigns.
+              </p>
+            </div>
+          ) : (
+            <div className="bg-red-500/10 border border-red-500/20 p-6 rounded-2xl flex-1 flex flex-col items-center justify-center text-center">
+              <AlertTriangle className="w-12 h-12 text-red-500 mb-4" />
+              <h4 className="text-lg font-bold text-red-500 mb-2">Action Required: Pending Platform Access Fee</h4>
+              <p className="text-sm text-red-500/80 mb-6">
+                Your account is restricted. You must pay the ₹1,500 refundable platform fee to unlock campaign submissions.
+              </p>
+              <Link href="/payment" className="w-full">
+                <button className="w-full py-3 bg-red-500 hover:bg-red-600 rounded-xl font-bold text-white transition-all shadow-lg shadow-red-500/20">
+                  Pay Now
+                </button>
+              </Link>
+            </div>
+          )}
+        </div>
+
         {/* Profile Info */}
         <div className="glass-card p-8">
           <div className="w-20 h-20 bg-primary/20 rounded-full flex items-center justify-center mb-6">
@@ -45,37 +76,6 @@ export default async function ProfilePage() {
               <span className="capitalize">{user.job_type || "Digital Marketing Associate"}</span>
             </div>
           </div>
-        </div>
-
-        {/* Billing & Status */}
-        <div className="glass-card p-8 flex flex-col">
-          <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
-            <CreditCard className="w-6 h-6 text-primary" />
-            Billing & Status
-          </h3>
-
-          {hasPaid ? (
-            <div className="bg-green-500/10 border border-green-500/20 p-6 rounded-2xl flex-1 flex flex-col items-center justify-center text-center">
-              <CheckCircle className="w-12 h-12 text-green-500 mb-4" />
-              <h4 className="text-lg font-bold text-green-500 mb-2">Account Active</h4>
-              <p className="text-sm text-green-500/80">
-                Your Platform Fee is paid. You have full access to marketing campaigns.
-              </p>
-            </div>
-          ) : (
-            <div className="bg-red-500/10 border border-red-500/20 p-6 rounded-2xl flex-1 flex flex-col items-center justify-center text-center">
-              <AlertTriangle className="w-12 h-12 text-red-500 mb-4" />
-              <h4 className="text-lg font-bold text-red-500 mb-2">Pending Platform Access Fee</h4>
-              <p className="text-sm text-red-500/80 mb-6">
-                Your account is restricted. You must pay the ₹1,500 refundable platform fee to unlock campaign submissions.
-              </p>
-              <Link href="/payment" className="w-full">
-                <button className="w-full py-3 bg-red-500 hover:bg-red-600 rounded-xl font-bold text-white transition-all shadow-lg shadow-red-500/20">
-                  Pay Now
-                </button>
-              </Link>
-            </div>
-          )}
         </div>
       </div>
     </div>

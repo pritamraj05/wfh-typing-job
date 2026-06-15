@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowRight, CheckCircle2, ShieldCheck, Wallet, Banknote } from "lucide-react";
+import { ArrowRight, CheckCircle2, ShieldCheck, Wallet, Banknote, MessageCircle } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useAuth, UserButton, SignInButton, SignUpButton } from "@clerk/nextjs";
@@ -182,8 +182,21 @@ export default function LandingPage() {
             </p>
           </div>
         </motion.div>
-
       </main>
+
+      {/* Floating WhatsApp Helpdesk Button */}
+      <a
+        href="https://wa.me/917717609901?text=Hello%20MicroDesk%20Team,%20I%20need%20help%20with%20my%20typing%20job%20application."
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-6 right-6 z-50 flex items-center justify-center p-4 bg-green-500 text-white rounded-full shadow-[0_0_20px_rgba(34,197,94,0.5)] hover:bg-green-600 hover:scale-110 transition-all duration-300 group"
+      >
+        <MessageCircle className="w-8 h-8" />
+        <span className="absolute right-full mr-4 bg-gray-900 text-white text-sm font-semibold py-1 px-3 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+          Help Desk / Support
+        </span>
+        <span className="absolute w-full h-full rounded-full border-2 border-green-500 animate-ping opacity-75"></span>
+      </a>
     </div>
   );
 }

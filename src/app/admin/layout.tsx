@@ -1,48 +1,13 @@
-import { auth } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
-import { LayoutDashboard, FileText, ListChecks, ArrowDownToLine, ShieldAlert } from "lucide-react";
-import Link from "next/link";
+import { ShieldAlert } from "lucide-react";
 
-export default async function AdminLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const { userId } = await auth();
-
-  // In a real app, verify this userId belongs to an Admin role from your DB
-  // For now, if no userId, redirect to sign in.
-  if (!userId) {
-    redirect("/sign-in");
-  }
-
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen flex bg-background">
-      {/* Admin Sidebar */}
-      <aside className="w-64 border-r border-red-500/10 bg-red-950/10 hidden md:flex flex-col">
-        <div className="p-6 border-b border-red-500/10 flex items-center gap-2 text-red-500">
-          <ShieldAlert className="w-6 h-6" />
-          <h2 className="text-xl font-bold">God Mode</h2>
-        </div>
-        <nav className="flex-1 p-4 space-y-2">
-          {[
-            { href: "/admin", icon: <LayoutDashboard className="w-5 h-5" />, label: "Dashboard" },
-            { href: "/admin/tasks", icon: <FileText className="w-5 h-5" />, label: "Manage Tasks" },
-            { href: "/admin/queue", icon: <ListChecks className="w-5 h-5" />, label: "Review Queue" },
-            { href: "/admin/withdrawals", icon: <ArrowDownToLine className="w-5 h-5" />, label: "Withdrawals" },
-          ].map((item, i) => (
-            <Link key={i} href={item.href}>
-              <span className="flex items-center gap-3 px-4 py-3 rounded-xl text-muted-foreground hover:text-red-400 hover:bg-red-500/10 transition-all">
-                {item.icon}
-                <span className="font-medium">{item.label}</span>
-              </span>
-            </Link>
-          ))}
-        </nav>
-      </aside>
-
-      {/* Main Content */}
-      <main className="flex-1 overflow-y-auto bg-black/50">
+    <div className="min-h-screen bg-gray-50 text-gray-900">
+      <header className="bg-gray-900 text-white p-4 flex items-center gap-3 sticky top-0 z-50 shadow-md">
+        <ShieldAlert className="text-red-500 w-6 h-6" />
+        <h1 className="text-xl font-bold tracking-wider">SECURE ADMIN CONSOLE</h1>
+      </header>
+      <main className="p-6 md:p-12 max-w-7xl mx-auto">
         {children}
       </main>
     </div>

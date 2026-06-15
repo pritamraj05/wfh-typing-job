@@ -35,7 +35,8 @@ export async function submitOnboardingForm(formData: FormData) {
 
     if (error) {
       console.error("Failed to save onboarding data:", error);
-      return { success: false, error: "Database error: " + error.message };
+      const urlCheck = process.env.NEXT_PUBLIC_SUPABASE_URL || 'missing';
+      return { success: false, error: `DB Error: ${error.message} | URL check: ${urlCheck.substring(0, 15)}` };
     }
   } catch (err: any) {
     console.error("Fetch Exception:", err);

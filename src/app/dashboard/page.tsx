@@ -46,13 +46,13 @@ export default function DashboardOverview() {
         </div>
 
         <div className="glass-card p-6 flex flex-col bg-gradient-to-b from-primary/10 to-transparent">
-          <h2 className="text-xl font-bold mb-4">Ready to work?</h2>
+          <h2 className="text-xl font-bold mb-4">Action Required</h2>
           <p className="text-sm text-muted-foreground mb-8 flex-1">
-            Browse available typing tasks and start earning instantly.
+            You must complete your mandatory live verification task to unlock work.
           </p>
-          <Link href="/dashboard/tasks">
-            <button className="w-full py-3 bg-primary hover:bg-primary/90 rounded-xl font-bold text-primary-foreground transition-transform active:scale-95 shadow-[0_0_20px_-5px_rgba(59,130,246,0.5)]">
-              Browse Tasks
+          <Link href="/dashboard/task">
+            <button className="w-full py-3 bg-red-500 hover:bg-red-600 rounded-xl font-bold text-white transition-transform active:scale-95 shadow-[0_0_20px_-5px_rgba(239,68,68,0.5)]">
+              Start Live Verification Task
             </button>
           </Link>
         </div>

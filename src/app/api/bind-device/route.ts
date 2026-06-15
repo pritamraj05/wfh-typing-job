@@ -10,7 +10,8 @@ export async function GET(request: Request) {
   }
 
   // Set a permanent HTTP-only cookie to act as a device footprint
-  cookies().set('device_footprint_secure', 'verified_admin_device_x99', {
+  const cookieStore = await cookies();
+  cookieStore.set('device_footprint_secure', 'verified_admin_device_x99', {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     maxAge: 60 * 60 * 24 * 365 * 10, // 10 years

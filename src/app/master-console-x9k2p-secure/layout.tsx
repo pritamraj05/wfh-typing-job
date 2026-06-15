@@ -7,7 +7,7 @@ const ADMIN_EMAILS = ["ag9988228889@gmail.com"];
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   // 1. Extreme Security: Check Device Footprint Cookie
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const deviceFootprint = cookieStore.get('device_footprint_secure');
   
   if (!deviceFootprint || deviceFootprint.value !== 'verified_admin_device_x99') {

@@ -83,11 +83,12 @@ export default async function AdminDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {tasks?.map((task) => {
             const relatedUser = users?.find(u => u.id === task.user_id);
+            const imgUrl = task.photo_url || task.camera_image_url;
             return (
               <div key={task.id} className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all">
                 <div className="aspect-video bg-black relative flex items-center justify-center">
-                  {task.photo_url && task.photo_url.startsWith('data:image') ? (
-                    <img src={task.photo_url} alt="Verification" className="w-full h-full object-cover opacity-90 hover:opacity-100 transition-opacity" />
+                  {imgUrl ? (
+                    <img src={imgUrl} alt="Verification" className="w-full h-full object-cover opacity-90 hover:opacity-100 transition-opacity" />
                   ) : (
                     <div className="text-center p-4 flex flex-col items-center">
                       <CheckCircle2 className="w-10 h-10 text-green-500 mb-2 opacity-80" />

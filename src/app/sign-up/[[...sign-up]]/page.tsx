@@ -5,7 +5,7 @@ export default function SignUpPage() {
     <div className="min-h-screen flex items-center justify-center bg-background p-4 relative overflow-hidden">
       <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-primary/20 blur-[120px] pointer-events-none" />
       <div className="z-10 relative">
-        <SignUp forceRedirectUrl="/onboarding" appearance={{
+        <SignUp path="/sign-up" routing="path" forceRedirectUrl="/onboarding" appearance={{
           elements: {
             rootBox: "mx-auto",
             card: "bg-card border border-white/5 shadow-2xl rounded-2xl",

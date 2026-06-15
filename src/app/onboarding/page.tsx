@@ -8,6 +8,10 @@ export default function OnboardingPage() {
   const [dob, setDob] = useState("");
   const [age, setAge] = useState("");
 
+  // Calculate the maximum date allowed (16 years ago from today)
+  const today = new Date();
+  const maxDate = new Date(today.getFullYear() - 16, today.getMonth(), today.getDate()).toISOString().split('T')[0];
+
   const handleDobChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newDob = e.target.value;
     setDob(newDob);
@@ -70,10 +74,12 @@ export default function OnboardingPage() {
                 id="dob"
                 name="dob"
                 required
+                max={maxDate}
                 value={dob}
                 onChange={handleDobChange}
                 className="w-full px-4 py-3 rounded-xl border border-border bg-card text-foreground focus:ring-2 focus:ring-primary outline-none transition-all"
               />
+              <p className="text-xs text-muted-foreground mt-1">Must be at least 16 years old</p>
             </div>
             <div className="space-y-2">
               <label htmlFor="age" className="text-sm font-semibold text-foreground">
@@ -137,10 +143,11 @@ export default function OnboardingPage() {
 
           <button
             type="submit"
-            className="w-full mt-8 py-4 bg-primary text-primary-foreground rounded-xl font-bold text-lg hover:bg-primary/90 transition-all flex justify-center items-center gap-2 group shadow-lg shadow-primary/20"
+            disabled={!age || parseInt(age) < 16}
+            className="w-full mt-8 py-4 bg-primary text-primary-foreground rounded-xl font-bold text-lg hover:bg-primary/90 transition-all flex justify-center items-center gap-2 group shadow-lg shadow-primary/20 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Submit Application
-            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            {(!age || parseInt(age) < 16) ? "Must be 16+ to Submit" : "Submit Application"}
+            {age && parseInt(age) >= 16 && <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />}
           </button>
         </form>
       </div>

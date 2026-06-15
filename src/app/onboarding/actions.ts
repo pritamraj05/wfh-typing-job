@@ -19,22 +19,32 @@ export async function submitOnboardingForm(formData: FormData) {
   const jobType = formData.get("jobType") as string;
 
   // Save to Supabase using standard client
-  const { error } = await supabase
-    .from("users")
-    .upsert({
-      id: userId,
-      full_name: fullName,
-      age: age,
-      dob: dob,
-      mobile_number: mobile,
-      email: email,
-      job_type: jobType,
-      updated_at: new Date().toISOString(),
-    });
+  try {
+    const { error } = await supabase
+      .from("users")
+      .upsert({
+        id: userId,
+        full_name: fullName,
+        age: age,
+        dob: dob,
+        mobile_number: mobile,
+        email: email,
+        job_type: jobType,
+        updated_at: new Date().toISOString(),
+      });
 
-  if (error) {
-    console.error("Failed to save onboarding data:", error);
-    return { success: false, error: error.message };
+    if (error) {
+      console.error("Failed to save onboarding data:", error);
+      return { success: false, error: "Database error: " + error.message };
+    }
+  } catch (err: any) {
+    console.error("Fetch Exception:", err);
+    // Return detailed error info to the client
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'missing';
+    return { 
+      success: false, 
+      error: `Network Error: ${err.message}. Supabase URL starts with: ${supabaseUrl.substring(0, 15)}... Cause: ${err.cause ? err.cause.message : 'unknown'}`
+    };
   }
 
   // Success! Let the client know so it can redirect properly.

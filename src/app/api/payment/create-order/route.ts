@@ -15,8 +15,8 @@ export async function POST() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Fixed amount for premium access: ₹1500 (in paise)
-    const amount = 1500 * 100;
+    // Temporary price for testing: ₹1 (in paise)
+    const amount = 1 * 100;
 
     const options = {
       amount,

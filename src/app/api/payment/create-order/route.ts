@@ -32,8 +32,9 @@ export async function POST() {
       currency: order.currency,
       amount: order.amount,
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Razorpay Create Order Error:", error);
-    return NextResponse.json({ error: "Failed to create order" }, { status: 500 });
+    const errorMsg = error?.error?.description || error?.message || JSON.stringify(error);
+    return NextResponse.json({ error: "Failed to create order: " + errorMsg }, { status: 500 });
   }
 }

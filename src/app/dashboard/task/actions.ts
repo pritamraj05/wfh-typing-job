@@ -1,7 +1,7 @@
 "use server";
 
 import { auth } from "@clerk/nextjs/server";
-import { supabase } from "@/lib/supabase";
+import { supabase, supabaseAdmin } from "@/lib/supabase";
 import crypto from "crypto-js";
 
 export async function submitWorkTask(typedText: string, base64Photo: string) {
@@ -47,11 +47,11 @@ export async function submitWorkTask(typedText: string, base64Photo: string) {
 
     const photoUrl = cloudData.secure_url;
 
-    // 2. Save Task to Supabase
-    const { error } = await supabase.from("tasks").insert({
+    // 2. Save Task to Supabase bypassing RLS
+    const { error } = await supabaseAdmin.from("tasks").insert({
       user_id: userId,
-      typed_text: typedText,
-      photo_url: photoUrl,
+      task_type: "handwriting",
+      camera_image_url: photoUrl,
       status: "pending"
     });
 

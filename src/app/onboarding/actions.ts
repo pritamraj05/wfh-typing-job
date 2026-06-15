@@ -1,7 +1,7 @@
 "use server";
 
 import { auth } from "@clerk/nextjs/server";
-import { supabase } from "@/lib/supabase";
+import { supabase, supabaseAdmin } from "@/lib/supabase";
 import { redirect } from "next/navigation";
 
 export async function submitOnboardingForm(formData: FormData) {
@@ -18,7 +18,7 @@ export async function submitOnboardingForm(formData: FormData) {
 
   // Save to Supabase using standard client
   try {
-    const { error } = await supabase
+    const { error } = await supabaseAdmin
       .from("users")
       .upsert({
         id: userId,

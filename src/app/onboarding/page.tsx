@@ -1,16 +1,41 @@
 "use client";
 
-import { submitOnboardingForm } from "./actions";
+import { submitOnboardingForm, getOnboardingData } from "./actions";
 import { ArrowRight, ClipboardCheck, AlertCircle } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 export default function OnboardingPage() {
+  const [fullName, setFullName] = useState("");
   const [dob, setDob] = useState("");
   const [age, setAge] = useState("");
+  const [mobile, setMobile] = useState("");
+  const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
   const router = useRouter();
+
+  // Fetch existing data on mount
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const data = await getOnboardingData();
+        if (data) {
+          setFullName(data.fullName);
+          setDob(data.dob);
+          setAge(data.age);
+          setMobile(data.mobile);
+          setEmail(data.email);
+        }
+      } catch (err) {
+        console.error("Failed to load existing data", err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    loadData();
+  }, []);
 
   // Calculate the maximum date allowed (16 years ago from today)
   const today = new Date();
@@ -55,6 +80,14 @@ export default function OnboardingPage() {
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="w-10 h-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6">
       <div className="w-full max-w-lg glass-card p-8 md:p-12 relative overflow-hidden">
@@ -91,6 +124,8 @@ export default function OnboardingPage() {
               id="fullName"
               name="fullName"
               required
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
               placeholder="e.g. Rahul Sharma"
               className="w-full px-4 py-3 rounded-xl border border-border bg-card text-foreground focus:ring-2 focus:ring-primary outline-none transition-all"
             />
@@ -139,6 +174,8 @@ export default function OnboardingPage() {
               id="mobile"
               name="mobile"
               required
+              value={mobile}
+              onChange={(e) => setMobile(e.target.value)}
               placeholder="+91 XXXXX XXXXX"
               pattern="[0-9\-\+\s]*"
               className="w-full px-4 py-3 rounded-xl border border-border bg-card text-foreground focus:ring-2 focus:ring-primary outline-none transition-all"
@@ -154,6 +191,8 @@ export default function OnboardingPage() {
               id="email"
               name="email"
               required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               placeholder="rahul@example.com"
               className="w-full px-4 py-3 rounded-xl border border-border bg-card text-foreground focus:ring-2 focus:ring-primary outline-none transition-all"
             />

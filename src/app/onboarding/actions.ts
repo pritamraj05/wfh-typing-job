@@ -18,15 +18,8 @@ export async function submitOnboardingForm(formData: FormData) {
   const email = formData.get("email") as string;
   const jobType = formData.get("jobType") as string;
 
-  // Use Service Role Key to bypass any RLS issues
-  const { createClient } = await import("@supabase/supabase-js");
-  const supabaseAdmin = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  );
-
-  // Save to Supabase
-  const { error } = await supabaseAdmin
+  // Save to Supabase using standard client
+  const { error } = await supabase
     .from("users")
     .upsert({
       id: userId,
@@ -46,4 +39,25 @@ export async function submitOnboardingForm(formData: FormData) {
 
   // Success! Let the client know so it can redirect properly.
   return { success: true };
+}
+
+export async function getOnboardingData() {
+  const { userId } = await auth();
+  if (!userId) return null;
+
+  const { data, error } = await supabase
+    .from("users")
+    .select("full_name, age, dob, mobile_number, email, job_type")
+    .eq("id", userId)
+    .single();
+
+  if (error || !data) return null;
+
+  return {
+    fullName: data.full_name || "",
+    age: data.age || "",
+    dob: data.dob || "",
+    mobile: data.mobile_number || "",
+    email: data.email || "",
+  };
 }

@@ -7,6 +7,7 @@ import { useState } from "react";
 export default function OnboardingPage() {
   const [dob, setDob] = useState("");
   const [age, setAge] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Calculate the maximum date allowed (16 years ago from today)
   const today = new Date();
@@ -30,6 +31,19 @@ export default function OnboardingPage() {
     }
   };
 
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    
+    const formData = new FormData(e.currentTarget);
+    try {
+      await submitOnboardingForm(formData);
+    } catch (err) {
+      console.error(err);
+      setIsSubmitting(false); // only reset if error, since success redirects
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6">
       <div className="w-full max-w-lg glass-card p-8 md:p-12 relative overflow-hidden">
@@ -49,7 +63,7 @@ export default function OnboardingPage() {
           Complete your profile to proceed to the next step.
         </p>
 
-        <form action={submitOnboardingForm} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
             <label htmlFor="fullName" className="text-sm font-semibold text-foreground">
               Full Legal Name
@@ -143,11 +157,19 @@ export default function OnboardingPage() {
 
           <button
             type="submit"
-            disabled={!age || parseInt(age) < 16}
+            disabled={!age || parseInt(age) < 16 || isSubmitting}
             className="w-full mt-8 py-4 bg-primary text-primary-foreground rounded-xl font-bold text-lg hover:bg-primary/90 transition-all flex justify-center items-center gap-2 group shadow-lg shadow-primary/20 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {(!age || parseInt(age) < 16) ? "Must be 16+ to Submit" : "Submit Application"}
-            {age && parseInt(age) >= 16 && <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />}
+            {isSubmitting ? (
+              <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            ) : (!age || parseInt(age) < 16) ? (
+              "Must be 16+ to Submit"
+            ) : (
+              <>
+                Submit Application
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </>
+            )}
           </button>
         </form>
       </div>

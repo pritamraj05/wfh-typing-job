@@ -1,6 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { supabase } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabase";
 
 export default async function PaymentLayout({
   children,
@@ -13,7 +13,7 @@ export default async function PaymentLayout({
     redirect("/sign-in");
   }
 
-  const { data: user } = await supabase
+  const { data: user } = await supabaseAdmin
     .from("users")
     .select("full_name, has_paid")
     .eq("id", userId)

@@ -52,7 +52,7 @@ export async function getOnboardingData() {
   const { userId } = await auth();
   if (!userId) return null;
 
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from("users")
     .select("full_name, mobile_number, email, job_type")
     .eq("id", userId)

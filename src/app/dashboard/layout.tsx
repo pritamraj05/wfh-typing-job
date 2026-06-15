@@ -2,7 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { LayoutDashboard, CheckSquare, Wallet, User as UserIcon } from "lucide-react";
 import Link from "next/link";
-import { supabase } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabase";
 
 export default async function DashboardLayout({
   children,
@@ -16,7 +16,7 @@ export default async function DashboardLayout({
   }
 
   // Strict Flow Enforcement
-  const { data: user } = await supabase
+  const { data: user } = await supabaseAdmin
     .from("users")
     .select("full_name, has_paid")
     .eq("id", userId)

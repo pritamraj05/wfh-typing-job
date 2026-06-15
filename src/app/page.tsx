@@ -40,7 +40,7 @@ export default function LandingPage() {
               <Link href="/dashboard" className="text-sm font-semibold hover:text-primary transition-colors">
                 Dashboard
               </Link>
-              <UserButton afterSignOutUrl="/" />
+              <UserButton />
             </>
           ) : (
             isLoaded && (

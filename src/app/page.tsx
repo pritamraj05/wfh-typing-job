@@ -184,6 +184,21 @@ export default function LandingPage() {
         </motion.div>
       </main>
 
+      {/* Footer for Legal Pages */}
+      <footer className="w-full border-t border-white/10 bg-background/50 backdrop-blur-md py-8 z-40 mt-24">
+        <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4">
+          <div className="text-muted-foreground text-sm">
+            © 2026 MicroDesk Solutions. All rights reserved.
+          </div>
+          <div className="flex gap-6 text-sm text-muted-foreground">
+            <Link href="/terms" className="hover:text-primary transition-colors">Terms</Link>
+            <Link href="/privacy" className="hover:text-primary transition-colors">Privacy Policy</Link>
+            <Link href="/refund" className="hover:text-primary transition-colors">Refund Policy</Link>
+            <Link href="/contact" className="hover:text-primary transition-colors">Contact Us</Link>
+          </div>
+        </div>
+      </footer>
+
       {/* Floating WhatsApp Helpdesk Button */}
       <a
         href="https://wa.me/917717609901?text=Hello%20MicroDesk%20Team,%20I%20need%20help%20with%20my%20typing%20job%20application."

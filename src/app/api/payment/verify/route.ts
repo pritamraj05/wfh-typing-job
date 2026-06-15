@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import crypto from "crypto";
 import { auth } from "@clerk/nextjs/server";
-import { supabase } from "@/lib/supabase";
+import { supabase, supabaseAdmin } from "@/lib/supabase";
 
 export async function POST(req: Request) {
   try {
@@ -25,8 +25,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
     }
 
-    // Update user in Supabase to grant premium access
-    const { error: dbError } = await supabase
+    // Update user in Supabase to grant premium access bypassing RLS
+    const { error: dbError } = await supabaseAdmin
       .from("users")
       .upsert({ id: userId, has_paid: true, updated_at: new Date().toISOString() });
 

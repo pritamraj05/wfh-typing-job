@@ -17,8 +17,6 @@ export async function submitOnboardingForm(formData: FormData) {
   const mobile = formData.get("mobile") as string;
   const email = formData.get("email") as string;
   const jobType = formData.get("jobType") as string;
-  const typingSpeed = formData.get("typingSpeed") as string;
-  const deviceType = formData.get("deviceType") as string;
 
   // Save to Supabase
   const { error } = await supabase
@@ -31,8 +29,6 @@ export async function submitOnboardingForm(formData: FormData) {
       mobile_number: mobile,
       email: email,
       job_type: jobType,
-      typing_speed: typingSpeed,
-      device_type: deviceType,
       updated_at: new Date().toISOString(),
     });
 

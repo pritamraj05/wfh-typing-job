@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, CheckCircle2, ShieldCheck, Wallet, Banknote } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { useAuth, UserButton } from "@clerk/nextjs";
+import { useAuth, UserButton, SignInButton, SignUpButton } from "@clerk/nextjs";
 
 const LIVE_NOTIFICATIONS = [
   "Rahul just withdrew ₹500",
@@ -44,9 +44,11 @@ export default function LandingPage() {
             </>
           ) : (
             isLoaded && (
-              <Link href="/sign-in" className="text-sm font-semibold hover:text-primary transition-colors">
-                Login
-              </Link>
+              <SignInButton mode="modal" forceRedirectUrl="/dashboard" signUpForceRedirectUrl="/onboarding">
+                <button className="text-sm font-semibold hover:text-primary transition-colors">
+                  Login
+                </button>
+              </SignInButton>
             )
           )}
         </div>
@@ -96,12 +98,12 @@ export default function LandingPage() {
           </p>
 
           {isLoaded && !isSignedIn && (
-            <Link href="/sign-up">
+            <SignUpButton mode="modal" forceRedirectUrl="/onboarding" signInForceRedirectUrl="/dashboard">
               <button className="group relative inline-flex items-center gap-2 px-8 py-4 bg-primary text-primary-foreground rounded-full text-lg font-semibold hover:bg-primary/90 transition-all duration-300 hover:scale-105 active:scale-95 shadow-[0_0_40px_-10px_rgba(59,130,246,0.5)]">
                 Get Started Now
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </button>
-            </Link>
+            </SignUpButton>
           )}
           {isLoaded && isSignedIn && (
             <Link href="/dashboard">

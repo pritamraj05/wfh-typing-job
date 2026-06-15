@@ -12,8 +12,6 @@ export async function submitOnboardingForm(formData: FormData) {
   }
 
   const fullName = formData.get("fullName") as string;
-  const age = formData.get("age") as string;
-  const dob = formData.get("dob") as string;
   const mobile = formData.get("mobile") as string;
   const email = formData.get("email") as string;
   const jobType = formData.get("jobType") as string;
@@ -25,8 +23,6 @@ export async function submitOnboardingForm(formData: FormData) {
       .upsert({
         id: userId,
         full_name: fullName,
-        age: age,
-        dob: dob,
         mobile_number: mobile,
         email: email,
         job_type: jobType,
@@ -58,7 +54,7 @@ export async function getOnboardingData() {
 
   const { data, error } = await supabase
     .from("users")
-    .select("full_name, age, dob, mobile_number, email, job_type")
+    .select("full_name, mobile_number, email, job_type")
     .eq("id", userId)
     .single();
 
@@ -66,8 +62,6 @@ export async function getOnboardingData() {
 
   return {
     fullName: data.full_name || "",
-    age: data.age || "",
-    dob: data.dob || "",
     mobile: data.mobile_number || "",
     email: data.email || "",
   };

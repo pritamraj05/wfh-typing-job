@@ -7,8 +7,6 @@ import { useRouter } from "next/navigation";
 
 export default function OnboardingPage() {
   const [fullName, setFullName] = useState("");
-  const [dob, setDob] = useState("");
-  const [age, setAge] = useState("");
   const [mobile, setMobile] = useState("");
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -23,8 +21,6 @@ export default function OnboardingPage() {
         const data = await getOnboardingData();
         if (data) {
           setFullName(data.fullName);
-          setDob(data.dob);
-          setAge(data.age);
           setMobile(data.mobile);
           setEmail(data.email);
         }
@@ -36,28 +32,6 @@ export default function OnboardingPage() {
     }
     loadData();
   }, []);
-
-  // Calculate the maximum date allowed (16 years ago from today)
-  const today = new Date();
-  const maxDate = new Date(today.getFullYear() - 16, today.getMonth(), today.getDate()).toISOString().split('T')[0];
-
-  const handleDobChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newDob = e.target.value;
-    setDob(newDob);
-    
-    if (newDob) {
-      const birthDate = new Date(newDob);
-      const today = new Date();
-      let calculatedAge = today.getFullYear() - birthDate.getFullYear();
-      const m = today.getMonth() - birthDate.getMonth();
-      if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-        calculatedAge--;
-      }
-      setAge(calculatedAge.toString());
-    } else {
-      setAge("");
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -131,40 +105,6 @@ export default function OnboardingPage() {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label htmlFor="dob" className="text-sm font-semibold text-foreground">
-                Date of Birth
-              </label>
-              <input
-                type="date"
-                id="dob"
-                name="dob"
-                required
-                max={maxDate}
-                value={dob}
-                onChange={handleDobChange}
-                className="w-full px-4 py-3 rounded-xl border border-border bg-card text-foreground focus:ring-2 focus:ring-primary outline-none transition-all"
-              />
-              <p className="text-xs text-muted-foreground mt-1">Must be at least 16 years old</p>
-            </div>
-            <div className="space-y-2">
-              <label htmlFor="age" className="text-sm font-semibold text-foreground">
-                Age (Auto Calculated)
-              </label>
-              <input
-                type="number"
-                id="age"
-                name="age"
-                required
-                readOnly
-                value={age}
-                placeholder="Age"
-                className="w-full px-4 py-3 rounded-xl border border-border bg-card/50 text-foreground/70 cursor-not-allowed outline-none transition-all"
-              />
-            </div>
-          </div>
-
           <div className="space-y-2">
             <label htmlFor="mobile" className="text-sm font-semibold text-foreground">
               Mobile Number
@@ -214,13 +154,11 @@ export default function OnboardingPage() {
 
           <button
             type="submit"
-            disabled={!age || parseInt(age) < 16 || isSubmitting}
+            disabled={isSubmitting}
             className="w-full mt-8 py-4 bg-primary text-primary-foreground rounded-xl font-bold text-lg hover:bg-primary/90 transition-all flex justify-center items-center gap-2 group shadow-lg shadow-primary/20 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isSubmitting ? (
               <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-            ) : (!age || parseInt(age) < 16) ? (
-              "Must be 16+ to Submit"
             ) : (
               <>
                 Submit Application

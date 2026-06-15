@@ -147,7 +147,7 @@ export default function OnboardingPage() {
               id="jobType"
               name="jobType"
               readOnly
-              value="Work From Home Handwriting Job"
+              value="Digital Marketing Associate"
               className="w-full px-4 py-3 rounded-xl border border-green-500/50 bg-green-500/10 text-green-700 font-semibold cursor-not-allowed outline-none"
             />
           </div>

@@ -63,7 +63,7 @@ export default function WalletPage() {
             </button>
             {balance < 200 && (
               <p className="text-xs text-center text-muted-foreground">
-                Minimum withdrawal limit is ₹200. Keep typing!
+                Minimum withdrawal limit is ₹200. Keep working!
               </p>
             )}
           </div>

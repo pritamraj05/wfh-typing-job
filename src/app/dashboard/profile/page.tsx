@@ -42,7 +42,7 @@ export default async function ProfilePage() {
             </div>
             <div className="flex items-center gap-3 text-muted-foreground">
               <Briefcase className="w-5 h-5" />
-              <span className="capitalize">{user.job_type || "WFH Typist"}</span>
+              <span className="capitalize">{user.job_type || "Digital Marketing Associate"}</span>
             </div>
           </div>
         </div>
@@ -59,15 +59,15 @@ export default async function ProfilePage() {
               <CheckCircle className="w-12 h-12 text-green-500 mb-4" />
               <h4 className="text-lg font-bold text-green-500 mb-2">Account Active</h4>
               <p className="text-sm text-green-500/80">
-                Your Security Deposit is paid. You have full access to WFH tasks.
+                Your Platform Fee is paid. You have full access to marketing campaigns.
               </p>
             </div>
           ) : (
             <div className="bg-red-500/10 border border-red-500/20 p-6 rounded-2xl flex-1 flex flex-col items-center justify-center text-center">
               <AlertTriangle className="w-12 h-12 text-red-500 mb-4" />
-              <h4 className="text-lg font-bold text-red-500 mb-2">Pending WFH Security Deposit</h4>
+              <h4 className="text-lg font-bold text-red-500 mb-2">Pending Platform Access Fee</h4>
               <p className="text-sm text-red-500/80 mb-6">
-                Your account is restricted. You must pay the ₹1,500 refundable security deposit to unlock task submissions.
+                Your account is restricted. You must pay the ₹1,500 refundable platform fee to unlock campaign submissions.
               </p>
               <Link href="/payment" className="w-full">
                 <button className="w-full py-3 bg-red-500 hover:bg-red-600 rounded-xl font-bold text-white transition-all shadow-lg shadow-red-500/20">

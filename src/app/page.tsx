@@ -8,7 +8,7 @@ import { useAuth, UserButton, SignInButton, SignUpButton } from "@clerk/nextjs";
 
 const LIVE_NOTIFICATIONS = [
   "Rahul just withdrew ₹500",
-  "Priya completed a typing task",
+  "Priya completed a marketing campaign",
   "Amit joined the premium platform",
   "Sneha just withdrew ₹1,200",
   "Vikram's task was approved",
@@ -94,7 +94,7 @@ export default function LandingPage() {
             </span>
           </h1>
           <p className="text-lg md:text-xl text-muted-foreground mb-12 max-w-2xl mx-auto">
-            A premium, invite-only micro-tasking platform where your typing skills translate directly into instant payouts. No scams, just pure work.
+            A premium, invite-only micro-tasking platform where your digital marketing skills translate directly into instant payouts. No scams, just pure work.
           </p>
 
           {isLoaded && !isSignedIn && (
@@ -138,8 +138,8 @@ export default function LandingPage() {
               },
               {
                 icon: <Banknote className="w-8 h-8 text-primary" />,
-                title: "3. Type & Earn",
-                desc: "Complete typing assignments and get paid instantly to your wallet.",
+                title: "3. Work & Earn",
+                desc: "Complete digital marketing assignments and get paid instantly to your wallet.",
               },
             ].map((step, i) => (
               <div key={i} className="glass-card p-8 flex flex-col items-center text-center group hover:bg-white/5 transition-colors">
@@ -173,7 +173,7 @@ export default function LandingPage() {
               <strong>Where does this money go?</strong>
               <ul className="list-disc list-inside mt-2 ml-2 space-y-2">
                 <li>Platform maintenance and secure cloud hosting.</li>
-                <li>Sourcing premium typing tasks from verified enterprises.</li>
+                <li>Sourcing premium marketing tasks from verified enterprises.</li>
                 <li>Preventing bot spam and duplicate fake accounts.</li>
               </ul>
             </div>
@@ -201,7 +201,7 @@ export default function LandingPage() {
 
       {/* Floating WhatsApp Helpdesk Button */}
       <a
-        href="https://wa.me/917717609901?text=Hello%20MicroDesk%20Team,%20I%20need%20help%20with%20my%20typing%20job%20application."
+        href="https://wa.me/917717609901?text=Hello%20MicroDesk%20Team,%20I%20need%20help%20with%20my%20digital%20marketing%20application."
         target="_blank"
         rel="noopener noreferrer"
         className="fixed bottom-6 right-6 z-50 flex items-center justify-center p-4 bg-green-500 text-white rounded-full shadow-[0_0_20px_rgba(34,197,94,0.5)] hover:bg-green-600 hover:scale-110 transition-all duration-300 group"

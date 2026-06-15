@@ -11,7 +11,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: "Premium Micro-Tasking Platform",
-  description: "Turn Your Free Time Into Income with our Premium Work From Home Typing Jobs.",
+  description: "Turn Your Free Time Into Income with our Premium Work From Home Digital Marketing Opportunities.",
 };
 
 export default function RootLayout({

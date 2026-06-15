@@ -67,7 +67,7 @@ export default function Workspace() {
           <textarea 
             value={text}
             onChange={(e) => setText(e.target.value)}
-            placeholder="Start typing here..."
+            placeholder="Start working here..."
             className="flex-1 w-full bg-card border border-white/10 rounded-lg p-6 text-foreground resize-none focus:outline-none focus:ring-2 focus:ring-primary/50 text-lg leading-relaxed shadow-inner"
             spellCheck="false"
           />

@@ -5,10 +5,10 @@ import { FileText, Clock, IndianRupee } from "lucide-react";
 import Link from "next/link";
 
 const MOCK_TASKS = [
-  { id: "1", title: "Type 5 pages of handwritten medical notes", words: 1200, deadline: "24 Hours", payout: 300 },
-  { id: "2", title: "Transcribe scanned legal document to text", words: 2500, deadline: "48 Hours", payout: 600 },
-  { id: "3", title: "Data entry: Convert PDF tables to format", words: 800, deadline: "12 Hours", payout: 250 },
-  { id: "4", title: "Copy type historical manuscript", words: 3500, deadline: "3 Days", payout: 1000 },
+  { id: "1", title: "Manage Instagram ad campaign for local clinic", words: 1200, deadline: "24 Hours", payout: 300 },
+  { id: "2", title: "Write SEO-optimized articles for legal blog", words: 2500, deadline: "48 Hours", payout: 600 },
+  { id: "3", title: "Digital Marketing: SEO analysis for blog", words: 800, deadline: "12 Hours", payout: 250 },
+  { id: "4", title: "Design and launch Facebook retargeting ads", words: 3500, deadline: "3 Days", payout: 1000 },
 ];
 
 export default function TaskBoard() {

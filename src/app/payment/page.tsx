@@ -89,7 +89,7 @@ export default function PaymentGatePage() {
         
         <h1 className="text-3xl font-bold mb-4">Unlock Your Dashboard</h1>
         <p className="text-muted-foreground mb-8">
-          You're just one step away from starting your premium typing jobs. Pay the one-time refundable platform fee to get instant access.
+          You're just one step away from starting your premium digital marketing campaigns. Pay the one-time refundable platform fee to get instant access.
         </p>
 
         <div className="bg-background/50 border border-white/5 rounded-2xl p-6 mb-8 text-left">

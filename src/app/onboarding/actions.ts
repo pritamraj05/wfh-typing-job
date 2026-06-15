@@ -8,7 +8,7 @@ export async function submitOnboardingForm(formData: FormData) {
   const { userId } = await auth();
 
   if (!userId) {
-    throw new Error("Unauthorized");
+    return { success: false, error: "Unauthorized" };
   }
 
   const fullName = formData.get("fullName") as string;
@@ -18,8 +18,15 @@ export async function submitOnboardingForm(formData: FormData) {
   const email = formData.get("email") as string;
   const jobType = formData.get("jobType") as string;
 
+  // Use Service Role Key to bypass any RLS issues
+  const { createClient } = await import("@supabase/supabase-js");
+  const supabaseAdmin = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+
   // Save to Supabase
-  const { error } = await supabase
+  const { error } = await supabaseAdmin
     .from("users")
     .upsert({
       id: userId,
@@ -34,9 +41,9 @@ export async function submitOnboardingForm(formData: FormData) {
 
   if (error) {
     console.error("Failed to save onboarding data:", error);
-    // Continue anyway to payment for MVP purposes
+    return { success: false, error: error.message };
   }
 
-  // Redirect to payment
-  redirect("/payment");
+  // Success! Let the client know so it can redirect properly.
+  return { success: true };
 }

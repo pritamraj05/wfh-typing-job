@@ -1,13 +1,16 @@
 "use client";
 
 import { submitOnboardingForm } from "./actions";
-import { ArrowRight, ClipboardCheck } from "lucide-react";
+import { ArrowRight, ClipboardCheck, AlertCircle } from "lucide-react";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function OnboardingPage() {
   const [dob, setDob] = useState("");
   const [age, setAge] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+  const router = useRouter();
 
   // Calculate the maximum date allowed (16 years ago from today)
   const today = new Date();
@@ -34,13 +37,21 @@ export default function OnboardingPage() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setErrorMsg("");
     
     const formData = new FormData(e.currentTarget);
     try {
-      await submitOnboardingForm(formData);
-    } catch (err) {
+      const res = await submitOnboardingForm(formData);
+      if (res?.error) {
+        setErrorMsg(res.error);
+        setIsSubmitting(false);
+      } else {
+        router.push("/payment");
+      }
+    } catch (err: any) {
       console.error(err);
-      setIsSubmitting(false); // only reset if error, since success redirects
+      setErrorMsg(err.message || "An unexpected error occurred.");
+      setIsSubmitting(false);
     }
   };
 
@@ -59,9 +70,16 @@ export default function OnboardingPage() {
         <h1 className="text-3xl font-extrabold text-center mb-2 text-foreground">
           Application Form
         </h1>
-        <p className="text-muted-foreground text-center mb-8">
+        <p className="text-muted-foreground text-center mb-6">
           Complete your profile to proceed to the next step.
         </p>
+
+        {errorMsg && (
+          <div className="bg-red-500/10 border border-red-500/20 text-red-500 p-4 rounded-xl flex items-center justify-center gap-2 mb-6">
+            <AlertCircle className="w-5 h-5 flex-shrink-0" />
+            <p className="text-sm font-medium">{errorMsg}</p>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">

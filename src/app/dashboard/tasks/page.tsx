@@ -5,7 +5,8 @@ import { FileText, Clock, IndianRupee } from "lucide-react";
 import Link from "next/link";
 
 const MOCK_TASKS = [
-  { id: "1", title: "Handwriting & Offline Typing Work Project", words: 1500, deadline: "24 Hours", payout: 500 },
+  { id: "1", title: "Offline Handwriting Assignment", words: 1500, deadline: "24 Hours", payout: 500 },
+  { id: "2", title: "Digital Online Typing Project", words: 2000, deadline: "48 Hours", payout: 800 },
 ];
 
 export default function TaskBoard() {

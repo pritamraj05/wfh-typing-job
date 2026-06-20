@@ -7,7 +7,7 @@ const razorpay = new Razorpay({
   key_secret: process.env.RAZORPAY_KEY_SECRET || "test_secret",
 });
 
-export async function POST() {
+export async function POST(req: Request) {
   try {
     const { userId } = await auth();
 
@@ -15,8 +15,11 @@ export async function POST() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Fixed amount for premium access: ₹1500 (in paise)
-    const amount = 1500 * 100;
+    const body = await req.json().catch(() => ({}));
+    const type = body.type || "platform_fee";
+    
+    // Default platform fee: ₹1500. Task activation: ₹300. (in paise)
+    const amount = type === "task_activation" ? 300 * 100 : 1500 * 100;
 
     const options = {
       amount,

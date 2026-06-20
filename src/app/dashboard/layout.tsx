@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { LayoutDashboard, CheckSquare, Wallet, User as UserIcon } from "lucide-react";
 import Link from "next/link";
 import { supabaseAdmin } from "@/lib/supabase";
+import { MobileNav } from "@/components/MobileNav";
 
 export default async function DashboardLayout({
   children,
@@ -60,7 +61,8 @@ export default async function DashboardLayout({
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto">
+      <main className="flex-1 flex flex-col overflow-y-auto">
+        <MobileNav />
         {children}
       </main>
     </div>

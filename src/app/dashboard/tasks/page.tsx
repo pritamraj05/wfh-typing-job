@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Clock, Loader2, CheckCircle2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+import Script from "next/script";
 
 const MOCK_TASKS = [
   { id: "1", title: "Offline Handwriting Assignment" },
@@ -24,23 +25,83 @@ export default function TaskBoard() {
     });
   }, []);
 
-  const handleActivate = (taskId: string) => {
+  const handleActivate = async (taskId: string) => {
     setActivatingTaskId(taskId);
     setActivationStatus("approving");
 
-    // Simulate automatic 5-second approval process
-    setTimeout(() => {
-      setActivationStatus("approved");
-      // Redirect to workspace shortly after approval
-      setTimeout(() => {
-        router.push(`/dashboard/workspace?taskId=${taskId}`);
-      }, 1500);
-    }, 5000);
+    try {
+      const res = await fetch("/api/payment/create-order", { 
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: "task_activation" })
+      });
+      const orderData = await res.json();
+
+      if (orderData.error) {
+        alert("Failed to initialize payment: " + orderData.error);
+        setActivatingTaskId(null);
+        setActivationStatus("idle");
+        return;
+      }
+
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "test_key",
+        amount: orderData.amount,
+        currency: orderData.currency,
+        name: "Task Activation Fee",
+        description: "Pay ₹300 to activate this typing task",
+        order_id: orderData.id,
+        handler: async function (response: any) {
+          const verifyRes = await fetch("/api/payment/verify", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_signature: response.razorpay_signature,
+            }),
+          });
+
+          if (verifyRes.ok) {
+            setActivationStatus("approved");
+            setTimeout(() => {
+              router.push(`/dashboard/workspace?taskId=${taskId}`);
+            }, 3000);
+          } else {
+            alert("Payment verification failed.");
+            setActivatingTaskId(null);
+            setActivationStatus("idle");
+          }
+        },
+        prefill: {
+          name: "User",
+          email: "user@example.com",
+        },
+        theme: {
+          color: "#ffffff",
+        },
+      };
+
+      const rzp = new (window as any).Razorpay(options);
+      rzp.on("payment.failed", function (response: any) {
+        alert("Payment Failed: " + response.error.description);
+        setActivatingTaskId(null);
+        setActivationStatus("idle");
+      });
+      rzp.open();
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong");
+      setActivatingTaskId(null);
+      setActivationStatus("idle");
+    }
   };
 
   return (
-    <div className="p-8 max-w-6xl mx-auto">
-      <header className="mb-10">
+    <>
+      <Script src="https://checkout.razorpay.com/v1/checkout.js" />
+      <div className="p-8 max-w-6xl mx-auto">
+        <header className="mb-10">
         <h1 className="text-3xl font-bold mb-2">Available Tasks</h1>
         <p className="text-muted-foreground">Pick a task below to start earning.</p>
       </header>
@@ -67,10 +128,13 @@ export default function TaskBoard() {
                 <h3 className="text-lg font-bold line-clamp-2 pr-4">{task.title}</h3>
               </div>
               
-              <div className="flex gap-4 text-sm text-muted-foreground mb-8">
-                <span className="flex items-center gap-1">
+              <div className="flex gap-4 text-sm text-muted-foreground mb-8 bg-black/20 p-3 rounded-lg w-max border border-white/5">
+                <span className="flex items-center gap-1 border-r border-white/10 pr-4">
                   <Clock className="w-4 h-4 text-primary" /> 
                   Validity: {validity[task.id] || "Calculating..."}
+                </span>
+                <span className="flex items-center gap-1 font-bold text-yellow-400 pl-2">
+                  Activation Fee: ₹300
                 </span>
               </div>
 
@@ -93,13 +157,18 @@ export default function TaskBoard() {
                     </>
                   )}
                   {isActivatingThis && activationStatus === "approved" && (
-                    <>
-                      <CheckCircle2 className="w-5 h-5" />
-                      Task Approved! Starting...
-                    </>
+                    <div className="flex flex-col items-start text-sm gap-2">
+                      <span className="flex items-center gap-2 font-medium">
+                        <CheckCircle2 className="w-5 h-5 text-green-300" /> Platform Fee Paid
+                      </span>
+                      <span className="flex items-center gap-2 font-medium">
+                        <CheckCircle2 className="w-5 h-5 text-green-300" /> Work Charge Paid
+                      </span>
+                      <span className="text-xs opacity-80 mt-1">Starting task...</span>
+                    </div>
                   )}
                   {!isActivatingThis && (
-                    "Activate Task"
+                    "Pay ₹300 & Activate Task"
                   )}
                 </button>
               </div>
@@ -108,5 +177,6 @@ export default function TaskBoard() {
         })}
       </div>
     </div>
+    </>
   );
 }

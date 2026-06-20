@@ -15,7 +15,11 @@ export default function PaymentGatePage() {
     setIsLoading(true);
     
     try {
-      const res = await fetch("/api/payment/create-order", { method: "POST" });
+      const res = await fetch("/api/payment/create-order", { 
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: "platform_fee" })
+      });
       const orderData = await res.json();
 
       if (orderData.error) {

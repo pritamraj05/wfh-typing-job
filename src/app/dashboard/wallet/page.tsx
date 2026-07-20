@@ -43,27 +43,27 @@ export default function WalletPage() {
           <div className="space-y-4 max-w-md">
             <div>
               <div className="flex justify-between text-sm mb-1">
-                <span className="text-muted-foreground">Withdrawal Threshold (₹200)</span>
-                <span className="text-primary font-medium">{Math.min((balance/200)*100, 100)}%</span>
+                <span className="text-muted-foreground">Withdrawal Threshold (₹5000)</span>
+                <span className="text-primary font-medium">{Math.min((balance/5000)*100, 100)}%</span>
               </div>
               <div className="w-full bg-black/50 rounded-full h-2 overflow-hidden border border-white/5">
                 <div 
                   className="bg-primary h-2 rounded-full transition-all duration-1000" 
-                  style={{ width: `${Math.min((balance/200)*100, 100)}%` }}
+                  style={{ width: `${Math.min((balance/5000)*100, 100)}%` }}
                 />
               </div>
             </div>
 
             <button 
               onClick={handleWithdraw}
-              disabled={balance < 200 || isWithdrawing}
+              disabled={balance < 5000 || isWithdrawing}
               className="w-full py-4 bg-primary hover:bg-primary/90 disabled:bg-primary/30 disabled:text-primary-foreground/50 text-primary-foreground font-bold rounded-xl transition-all active:scale-95 flex items-center justify-center gap-2 mt-4"
             >
               {isWithdrawing ? "Processing..." : "Request Withdrawal"} <ArrowUpRight className="w-5 h-5" />
             </button>
-            {balance < 200 && (
+            {balance < 5000 && (
               <p className="text-xs text-center text-muted-foreground">
-                Minimum withdrawal limit is ₹200. Keep working!
+                Minimum withdrawal limit is ₹5000. Keep working!
               </p>
             )}
           </div>

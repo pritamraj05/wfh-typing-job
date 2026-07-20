@@ -58,9 +58,12 @@ export default function TaskBoard() {
               </div>
               
               <div className="flex gap-4 text-sm text-muted-foreground mb-8 bg-black/20 p-3 rounded-lg w-max border border-white/5">
-                <span className="flex items-center gap-1 border-white/10 pr-4">
+                <span className="flex items-center gap-1 border-r border-white/10 pr-4">
                   <Clock className="w-4 h-4 text-primary" /> 
                   Validity: {validity[task.id] || "Calculating..."}
+                </span>
+                <span className="flex items-center gap-1 font-bold text-green-400 pl-2">
+                  Reward: ₹500
                 </span>
               </div>
 

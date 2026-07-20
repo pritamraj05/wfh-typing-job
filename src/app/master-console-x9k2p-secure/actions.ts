@@ -13,22 +13,21 @@ export async function manualApprovePayment(email: string) {
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   );
 
-  // First find the user by email
-  const { data: user, error: fetchError } = await supabaseAdmin
+  // Find users by email (could be multiple if they registered twice)
+  const { data: users, error: fetchError } = await supabaseAdmin
     .from("users")
     .select("id")
-    .eq("email", email)
-    .single();
+    .eq("email", email);
 
-  if (fetchError || !user) {
+  if (fetchError || !users || users.length === 0) {
     return { error: "User not found with this email." };
   }
 
-  // Update has_paid to true
+  // Update has_paid to true for all matching accounts
   const { error: updateError } = await supabaseAdmin
     .from("users")
     .update({ has_paid: true, updated_at: new Date().toISOString() })
-    .eq("id", user.id);
+    .in("id", users.map(u => u.id));
 
   if (updateError) {
     return { error: "Failed to update payment status." };

@@ -14,14 +14,19 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const body = await req.json().catch(() => ({}));
-    const type = body.type || "platform_fee";
-    
-    // Default platform fee: ₹1500. Task activation: ₹300. (in paise)
-    const amount = type === "task_activation" ? 300 * 100 : 1500 * 100;
+    const body = await req.json();
+    const { type } = body;
+
+    let amount = 150000; // 1500 INR default
+
+    if (type === "task_activation") {
+      amount = 30000; // 300 INR
+    } else if (type === "premium_task") {
+      amount = 50000; // 500 INR
+    }
 
     const options = {
-      amount,
+      amount: amount,
       currency: "INR",
       receipt: `rcpt_${userId.slice(-8)}_${Date.now()}`.slice(0, 40),
       payment_capture: 1, // Auto capture

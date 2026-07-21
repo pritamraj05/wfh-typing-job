@@ -12,7 +12,7 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = body;
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, type } = body;
 
     const secret = process.env.RAZORPAY_KEY_SECRET || "test_secret";
 
@@ -25,10 +25,17 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
     }
 
-    // Update user in Supabase to grant premium access bypassing RLS
+    // Update user in Supabase to grant access bypassing RLS
+    let updateData: any = { updated_at: new Date().toISOString() };
+    if (type === "premium_task") {
+      updateData.has_free_premium_task = true;
+    } else {
+      updateData.has_paid = true;
+    }
+
     const { error: dbError } = await supabaseAdmin
       .from("users")
-      .upsert({ id: userId, has_paid: true, updated_at: new Date().toISOString() });
+      .upsert({ id: userId, ...updateData });
 
     if (dbError) {
       console.error("Supabase Error after payment:", dbError);

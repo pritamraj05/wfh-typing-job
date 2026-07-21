@@ -36,3 +36,35 @@ export async function manualApprovePayment(email: string) {
   revalidatePath("/master-console-x9k2p-secure");
   return { success: true, message: `Payment approved for ${email}` };
 }
+
+export async function grantPremiumTaskAccess(email: string) {
+  if (!email) {
+    return { error: "Email is required" };
+  }
+
+  const supabaseAdmin = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+
+  const { data: users, error: fetchError } = await supabaseAdmin
+    .from("users")
+    .select("id")
+    .eq("email", email);
+
+  if (fetchError || !users || users.length === 0) {
+    return { error: "User not found with this email." };
+  }
+
+  const { error: updateError } = await supabaseAdmin
+    .from("users")
+    .update({ has_free_premium_task: true, updated_at: new Date().toISOString() })
+    .in("id", users.map(u => u.id));
+
+  if (updateError) {
+    return { error: "Failed to grant premium access. Ensure 'has_free_premium_task' column exists." };
+  }
+
+  revalidatePath("/master-console-x9k2p-secure");
+  return { success: true, message: `Premium Access granted to ${email}` };
+}

@@ -1,6 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { CheckCircle2, XCircle, Clock, ExternalLink } from "lucide-react";
 import ManualApproveForm from "./ManualApproveForm";
+import PremiumTaskApproveForm from "./PremiumTaskApproveForm";
 
 export const revalidate = 0; // Disable cache for admin panel
 
@@ -27,7 +28,10 @@ export default async function AdminDashboard() {
 
   return (
     <div className="space-y-12">
-      <ManualApproveForm />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <ManualApproveForm />
+        <PremiumTaskApproveForm />
+      </div>
       {/* Users Section */}
       <section>
         <h2 className="text-2xl font-bold border-b pb-2 mb-6">Registered Candidates (Onboarding)</h2>

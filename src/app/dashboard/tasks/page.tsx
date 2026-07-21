@@ -133,7 +133,7 @@ export default function TaskBoard() {
           {MOCK_TASKS.map((task, i) => {
             const isActivatingThis = activatingTaskId === task.id;
             const isPremium = task.id === "premium_typing";
-            const requiresPayment = isPremium && !hasFreeAccess;
+            const requiresPayment = (isPremium && !hasFreeAccess) || task.id === "1";
             
             return (
               <motion.div 

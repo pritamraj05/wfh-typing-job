@@ -59,7 +59,9 @@ export default function PremiumWorkspace() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a 
               href="https://drive.google.com/uc?export=download&id=1OkGW7M9UQOfuxDZxqDmlbQc9cqK15R5n" 
-              className="flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 text-white px-8 py-4 rounded-xl font-medium transition-all"
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center justify-center gap-2 bg-neutral-100 hover:bg-neutral-200 text-neutral-900 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:text-white border border-neutral-200 dark:border-neutral-700 px-8 py-4 rounded-xl font-medium transition-all"
             >
               <Download className="w-5 h-5" /> Download Document
             </a>

@@ -33,15 +33,17 @@ export default function TaskBoard() {
   }, []);
 
   const handleActivate = async (taskId: string) => {
-    if (taskId === "premium_typing" && !hasFreeAccess) {
-      // Handle Payment Flow for Premium Task
+    const isPremium = taskId === "premium_typing";
+    const requiresPayment = (isPremium && !hasFreeAccess) || taskId === "1";
+
+    if (requiresPayment) {
       setActivatingTaskId(taskId);
       
       try {
         const res = await fetch("/api/payment/create-order", { 
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ type: "premium_task" })
+          body: JSON.stringify({ type: isPremium ? "premium_task" : "task_activation" })
         });
         const orderData = await res.json();
 
@@ -55,8 +57,8 @@ export default function TaskBoard() {
           key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "test_key",
           amount: orderData.amount,
           currency: orderData.currency,
-          name: "Premium Task Activation",
-          description: "Pay ₹500 to unlock this premium task forever",
+          name: isPremium ? "Premium Task Activation" : "Task Activation Fee",
+          description: isPremium ? "Pay ₹500 to unlock this premium task forever" : "Pay ₹300 to activate this typing task",
           order_id: orderData.id,
           handler: async function (response: any) {
             const verifyRes = await fetch("/api/payment/verify", {
@@ -66,14 +68,18 @@ export default function TaskBoard() {
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_signature: response.razorpay_signature,
-                type: "premium_task"
+                type: isPremium ? "premium_task" : "task_activation"
               }),
             });
 
             if (verifyRes.ok) {
-              setHasFreeAccess(true);
+              if (isPremium) setHasFreeAccess(true);
               setTimeout(() => {
-                router.push(`/dashboard/workspace/premium`);
+                if (isPremium) {
+                  router.push(`/dashboard/workspace/premium`);
+                } else {
+                  router.push(`/dashboard/workspace?taskId=${taskId}`);
+                }
               }, 1500);
             } else {
               alert("Payment verification failed.");
@@ -103,14 +109,10 @@ export default function TaskBoard() {
       return;
     }
 
-    // Standard Activation
+    // Standard Activation (for Premium task if they have free access)
     setActivatingTaskId(taskId);
     setTimeout(() => {
-      if (taskId === "premium_typing") {
-        router.push(`/dashboard/workspace/premium`);
-      } else {
-        router.push(`/dashboard/workspace?taskId=${taskId}`);
-      }
+      router.push(`/dashboard/workspace/premium`);
     }, 1500);
   };
 
@@ -184,7 +186,7 @@ export default function TaskBoard() {
                     ) : requiresPayment ? (
                       <>
                         <Lock className="w-5 h-5" />
-                        Pay ₹500 & Activate
+                        Pay ₹{isPremium ? "500" : "300"} & Activate
                       </>
                     ) : (
                       <>

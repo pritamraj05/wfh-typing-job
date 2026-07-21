@@ -1,76 +1,76 @@
 "use client";
 
-import { useState } from "react";
-import { Send, AlertCircle, Maximize2 } from "lucide-react";
+import { Mail, Download, FileText } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useUser } from "@clerk/nextjs";
 
 export default function Workspace() {
-  const [text, setText] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { user } = useUser();
+  const [refCode, setRefCode] = useState("");
 
-  const handleSubmit = () => {
-    if (text.length < 50) return alert("Please type at least 50 characters.");
-    setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
-      alert("Task submitted successfully! Awaiting Admin approval.");
-      setText("");
-    }, 1500);
+  useEffect(() => {
+    // Generate a short reference code based on user ID or random
+    if (user) {
+      const code = `TASK-${user.id.slice(-6).toUpperCase()}-${Math.floor(Math.random() * 1000)}`;
+      setRefCode(code);
+    }
+  }, [user]);
+
+  const handleEmailSubmit = () => {
+    const subject = encodeURIComponent(`Task Submission - Ref: ${refCode}`);
+    const body = encodeURIComponent(`Hello Admin,\n\nHere is my completed document for the Typing Task.\n\nMy Reference Code: ${refCode}\n\n[PLEASE ATTACH YOUR COMPLETED FILE HERE]\n\nThank you.`);
+    window.open(`mailto:info.microdesk@gmail.com?subject=${subject}&body=${body}`);
   };
 
   return (
-    <div className="h-screen max-h-screen flex flex-col bg-background">
-      <header className="h-16 border-b border-white/5 flex items-center justify-between px-6 shrink-0 bg-card/30">
-        <div className="flex items-center gap-4">
-          <h1 className="font-bold">Active Workspace</h1>
-          <span className="px-2 py-1 text-xs bg-yellow-500/20 text-yellow-500 rounded-md font-medium border border-yellow-500/30">
-            In Progress
-          </span>
-        </div>
-        <button 
-          onClick={handleSubmit}
-          disabled={isSubmitting}
-          className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-2 rounded-lg font-medium transition-all disabled:opacity-50"
-        >
-          {isSubmitting ? "Submitting..." : "Submit for Review"} <Send className="w-4 h-4" />
-        </button>
-      </header>
+    <div className="min-h-screen p-8 flex items-center justify-center bg-background">
+      <div className="glass-card max-w-2xl w-full p-10 rounded-2xl border border-primary/20 text-center relative overflow-hidden">
+        {/* Background Decoration */}
+        <div className="absolute -top-24 -right-24 w-64 h-64 bg-primary/10 blur-3xl rounded-full pointer-events-none"></div>
+        <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-blue-500/10 blur-3xl rounded-full pointer-events-none"></div>
 
-      <div className="flex-1 flex overflow-hidden">
-        {/* Split Screen Left: PDF Viewer (Mock) */}
-        <div className="w-1/2 border-r border-white/5 flex flex-col bg-neutral-900/50 p-4">
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-              <AlertCircle className="w-4 h-4" /> Source Document.pdf
-            </span>
-            <button className="p-1 hover:bg-white/10 rounded"><Maximize2 className="w-4 h-4 text-muted-foreground" /></button>
+        <div className="relative z-10">
+          <div className="w-16 h-16 bg-gradient-to-br from-primary to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-primary/20">
+            <FileText className="w-8 h-8 text-white" />
           </div>
-          <div className="flex-1 bg-white rounded-lg overflow-hidden flex items-center justify-center p-8 text-black relative shadow-inner">
-             {/* Mock PDF Image/Content */}
-             <div className="max-w-md w-full opacity-60 pointer-events-none">
-                <h2 className="text-2xl font-serif mb-4 underline">Chapter 1: The Beginning</h2>
-                <p className="font-serif leading-loose text-lg text-justify mb-4">
-                  It was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness...
-                </p>
-                <p className="font-serif leading-loose text-lg text-justify">
-                  Please type this exactly as it appears. Do not fix grammar or spelling mistakes from the source document.
-                </p>
-             </div>
-          </div>
-        </div>
+          
+          <h1 className="text-3xl font-bold mb-4">Active Workspace</h1>
+          <p className="text-muted-foreground mb-8 text-lg">
+            Download the document, type it out in Microsoft Word or Notepad, and email us the completed file.
+          </p>
 
-        {/* Split Screen Right: Text Editor */}
-        <div className="w-1/2 flex flex-col p-4">
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-sm font-medium text-muted-foreground">Your Transcription Editor</span>
-            <span className="text-xs text-muted-foreground">{text.length} chars | {text.split(/\s+/).filter(w => w.length > 0).length} words</span>
+          <div className="bg-black/20 border border-white/10 rounded-xl p-6 mb-8 text-left">
+            <h3 className="font-bold text-white mb-2">Instructions:</h3>
+            <ol className="list-decimal list-inside text-muted-foreground space-y-2">
+              <li>Click <strong>Download Document</strong> to get the source file.</li>
+              <li>Type the contents exactly as they appear into a new file.</li>
+              <li>Save your file (PDF or DOCX).</li>
+              <li>Click <strong>Submit via Email</strong>. Attach your file before sending!</li>
+            </ol>
+            
+            {refCode && (
+              <div className="mt-6 p-4 bg-primary/10 border border-primary/30 rounded-lg text-center">
+                <span className="block text-xs text-primary/80 uppercase tracking-wider mb-1">Your Unique Reference Code</span>
+                <span className="font-mono text-xl font-bold text-primary">{refCode}</span>
+              </div>
+            )}
           </div>
-          <textarea 
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            placeholder="Start working here..."
-            className="flex-1 w-full bg-card border border-white/10 rounded-lg p-6 text-foreground resize-none focus:outline-none focus:ring-2 focus:ring-primary/50 text-lg leading-relaxed shadow-inner"
-            spellCheck="false"
-          />
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <button 
+              onClick={() => alert("Please contact admin for the source document link for this specific task.")}
+              className="flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 text-white px-8 py-4 rounded-xl font-medium transition-all"
+            >
+              <Download className="w-5 h-5" /> Download Document
+            </button>
+            
+            <button 
+              onClick={handleEmailSubmit}
+              className="flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 rounded-xl font-bold transition-all shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95"
+            >
+              <Mail className="w-5 h-5" /> Submit via Email
+            </button>
+          </div>
         </div>
       </div>
     </div>

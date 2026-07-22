@@ -31,7 +31,7 @@ export async function POST(req: Request) {
       const { data: user } = await supabaseAdmin
         .from("users")
         .select("id")
-        .eq("clerk_id", userId)
+        .eq("id", userId)
         .single();
         
       if (user) {
@@ -53,7 +53,7 @@ export async function POST(req: Request) {
       const { error: dbError } = await supabaseAdmin
         .from("users")
         .update(updateData)
-        .eq("clerk_id", userId);
+        .eq("id", userId);
   
       if (dbError) {
         console.error("Supabase Error after payment:", dbError);

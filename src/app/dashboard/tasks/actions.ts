@@ -15,7 +15,7 @@ export async function getDashboardData() {
   const { data: user } = await supabaseAdmin
     .from("users")
     .select("id, has_free_premium_task")
-    .eq("clerk_id", clerkId)
+    .eq("id", clerkId)
     .single();
 
   if (!user) return { tasks: [], unlockedTasks: [] };

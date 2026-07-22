@@ -9,7 +9,7 @@ import { getUserPremiumStatus } from "./actions";
 
 const MOCK_TASKS = [
   { id: "1", title: "Offline Handwriting Assignment", reward: 500 },
-  { id: "premium_typing", title: "Premium Computer Typing Project", reward: 2000 }
+  { id: "premium_typing", title: "Premium Computer Typing Project", reward: 700 }
 ];
 
 export default function TaskBoard() {

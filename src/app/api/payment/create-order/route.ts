@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import Razorpay from "razorpay";
 import { auth } from "@clerk/nextjs/server";
+import { createClient } from "@supabase/supabase-js";
 
 export async function POST(req: Request) {
   try {
@@ -15,14 +16,31 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { type } = body;
+    const { type, taskId } = body;
 
-    let amount = 150000; // 1500 INR default
+    let amount = 150000; // 1500 INR default (platform fee)
 
-    if (type === "task_activation") {
-      amount = 30000; // 300 INR
+    if (type === "task_activation" && taskId) {
+      const supabaseAdmin = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!
+      );
+      
+      const { data: task, error } = await supabaseAdmin
+        .from("available_tasks")
+        .select("activation_fee")
+        .eq("task_id", taskId)
+        .single();
+        
+      if (error || !task) {
+        return NextResponse.json({ error: "Task not found" }, { status: 404 });
+      }
+      
+      amount = task.activation_fee * 100; // Convert INR to paise
+    } else if (type === "task_activation") {
+      amount = 30000; // 300 INR fallback
     } else if (type === "premium_task") {
-      amount = 50000; // 500 INR
+      amount = 50000; // 500 INR fallback
     }
 
     const options = {

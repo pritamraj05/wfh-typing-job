@@ -5,45 +5,42 @@ import { Clock, Loader2, Play, Lock } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import Script from "next/script";
-import { getUserPremiumStatus } from "./actions";
-
-const MOCK_TASKS = [
-  { id: "1", title: "Offline Handwriting Assignment", reward: 500 },
-  { id: "premium_typing", title: "Premium Computer Typing Project", reward: 700 }
-];
+import { getDashboardData } from "./actions";
 
 export default function TaskBoard() {
   const router = useRouter();
   const [validity, setValidity] = useState<Record<string, string>>({});
   const [activatingTaskId, setActivatingTaskId] = useState<string | null>(null);
-  const [hasFreeAccess, setHasFreeAccess] = useState(false);
+  const [tasks, setTasks] = useState<any[]>([]);
+  const [unlockedTasks, setUnlockedTasks] = useState<Set<string>>(new Set());
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Generate a random validity time between 4 to 8 hours for each user on load
-    setValidity({
-      "1": `${Math.floor(Math.random() * 5) + 4} Hours`,
-      "premium_typing": `${Math.floor(Math.random() * 5) + 4} Hours`
-    });
-
-    getUserPremiumStatus().then((status) => {
-      setHasFreeAccess(status);
+    getDashboardData().then((data) => {
+      setTasks(data.tasks);
+      setUnlockedTasks(new Set(data.unlockedTasks));
+      
+      const newValidity: Record<string, string> = {};
+      data.tasks.forEach((t: any) => {
+        newValidity[t.task_id] = `${Math.floor(Math.random() * 5) + 4} Hours`;
+      });
+      setValidity(newValidity);
       setIsLoading(false);
     });
   }, []);
 
-  const handleActivate = async (taskId: string) => {
-    const isPremium = taskId === "premium_typing";
-    const requiresPayment = (isPremium && !hasFreeAccess) || taskId === "1";
+  const handleActivate = async (task: any) => {
+    const hasFreeAccess = unlockedTasks.has(task.task_id);
+    const requiresPayment = task.activation_fee > 0 && !hasFreeAccess;
 
     if (requiresPayment) {
-      setActivatingTaskId(taskId);
+      setActivatingTaskId(task.task_id);
       
       try {
         const res = await fetch("/api/payment/create-order", { 
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ type: isPremium ? "premium_task" : "task_activation" })
+          body: JSON.stringify({ type: "task_activation", taskId: task.task_id })
         });
         const orderData = await res.json();
 
@@ -57,8 +54,8 @@ export default function TaskBoard() {
           key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "test_key",
           amount: orderData.amount,
           currency: orderData.currency,
-          name: isPremium ? "Premium Task Activation" : "Task Activation Fee",
-          description: isPremium ? "Pay ₹500 to unlock this premium task forever" : "Pay ₹300 to activate this typing task",
+          name: task.title,
+          description: `Pay ₹${task.activation_fee} to activate this task`,
           order_id: orderData.id,
           handler: async function (response: any) {
             const verifyRes = await fetch("/api/payment/verify", {
@@ -68,18 +65,15 @@ export default function TaskBoard() {
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_signature: response.razorpay_signature,
-                type: isPremium ? "premium_task" : "task_activation"
+                type: "task_activation",
+                taskId: task.task_id
               }),
             });
 
             if (verifyRes.ok) {
-              if (isPremium) setHasFreeAccess(true);
+              setUnlockedTasks(prev => new Set(prev).add(task.task_id));
               setTimeout(() => {
-                if (isPremium) {
-                  router.push(`/dashboard/workspace/premium`);
-                } else {
-                  router.push(`/dashboard/workspace?taskId=${taskId}`);
-                }
+                router.push(`/dashboard/workspace?taskId=${task.task_id}`);
               }, 1500);
             } else {
               alert("Payment verification failed.");
@@ -109,10 +103,10 @@ export default function TaskBoard() {
       return;
     }
 
-    // Standard Activation (for Premium task if they have free access)
-    setActivatingTaskId(taskId);
+    // Standard Activation (Free or Already unlocked)
+    setActivatingTaskId(task.task_id);
     setTimeout(() => {
-      router.push(`/dashboard/workspace/premium`);
+      router.push(`/dashboard/workspace?taskId=${task.task_id}`);
     }, 1500);
   };
 
@@ -130,45 +124,42 @@ export default function TaskBoard() {
         </header>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {MOCK_TASKS.map((task, i) => {
-            const isActivatingThis = activatingTaskId === task.id;
-            const isPremium = task.id === "premium_typing";
-            const requiresPayment = (isPremium && !hasFreeAccess) || task.id === "1";
+          {tasks.map((task, i) => {
+            const isActivatingThis = activatingTaskId === task.task_id;
+            const hasFreeAccess = unlockedTasks.has(task.task_id);
+            const requiresPayment = task.activation_fee > 0 && !hasFreeAccess;
             
             return (
               <motion.div 
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: i * 0.1 }}
-                key={task.id} 
+                key={task.task_id} 
                 className={`glass-card p-6 flex flex-col transition-all border ${
                   isActivatingThis 
                     ? "border-primary/50 bg-primary/5" 
-                    : isPremium
-                    ? "border-purple-500/30 hover:border-purple-500/50 hover:bg-purple-500/5"
                     : "border-white/5 hover:border-primary/30 hover:bg-white/5"
                 }`}
               >
                 <div className="flex justify-between items-start mb-4">
                   <h3 className="text-lg font-bold line-clamp-2 pr-4 flex items-center gap-2">
                     {task.title}
-                    {isPremium && <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-500/20 text-purple-400 border border-purple-500/20 uppercase">Premium</span>}
                   </h3>
                 </div>
                 
                 <div className="flex gap-4 text-sm text-muted-foreground mb-8 bg-black/20 p-3 rounded-lg w-max border border-white/5 flex-wrap">
                   <span className="flex items-center gap-1 border-r border-white/10 pr-4">
                     <Clock className="w-4 h-4 text-primary" /> 
-                    Validity: {validity[task.id] || "Calculating..."}
+                    Validity: {validity[task.task_id] || "Calculating..."}
                   </span>
                   <span className="flex items-center gap-1 font-bold text-green-400 pl-2">
-                    Reward: ₹{task.reward}
+                    Reward: ₹{task.reward_amount}
                   </span>
                 </div>
 
                 <div className="mt-auto">
                   <button 
-                    onClick={() => handleActivate(task.id)}
+                    onClick={() => handleActivate(task)}
                     disabled={activatingTaskId !== null}
                     className={`w-full py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2 shadow-lg ${
                       isActivatingThis
@@ -186,12 +177,12 @@ export default function TaskBoard() {
                     ) : requiresPayment ? (
                       <>
                         <Lock className="w-5 h-5" />
-                        Pay ₹{isPremium ? "500" : "300"} & Activate
+                        Pay ₹{task.activation_fee} & Activate
                       </>
                     ) : (
                       <>
                         <Play className="w-5 h-5" />
-                        Start Task {isPremium && "(Free)"}
+                        Start Task {hasFreeAccess && task.activation_fee > 0 && "(Free)"}
                       </>
                     )}
                   </button>
@@ -199,6 +190,11 @@ export default function TaskBoard() {
               </motion.div>
             );
           })}
+          {tasks.length === 0 && (
+            <div className="col-span-full p-12 text-center text-gray-400 border-2 border-dashed rounded-2xl">
+              No tasks available right now. Please check back later.
+            </div>
+          )}
         </div>
       </div>
     </>

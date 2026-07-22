@@ -1,7 +1,8 @@
 import { createClient } from "@supabase/supabase-js";
 import { CheckCircle2, XCircle, Clock, ExternalLink } from "lucide-react";
 import ManualApproveForm from "./ManualApproveForm";
-import PremiumTaskApproveForm from "./PremiumTaskApproveForm";
+import GrantTaskAccessForm from "./GrantTaskAccessForm";
+import TaskManagerForm from "./TaskManagerForm";
 
 export const revalidate = 0; // Disable cache for admin panel
 
@@ -22,16 +23,29 @@ export default async function AdminDashboard() {
     .select("*")
     .order("created_at", { ascending: false });
 
+  const { data: availableTasks, error: availableTaskError } = await supabaseAdmin
+    .from("available_tasks")
+    .select("*")
+    .order("created_at", { ascending: false });
+
   if (userError || taskError) {
     return <div className="text-red-500 font-bold p-8">Database Error: {userError?.message || taskError?.message}</div>;
   }
 
   return (
     <div className="space-y-12">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <ManualApproveForm />
-        <PremiumTaskApproveForm />
-      </div>
+      
+      {/* Dynamic Task Management Section */}
+      <section>
+        <h2 className="text-2xl font-bold border-b pb-2 mb-6">Task & Access Management</h2>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <TaskManagerForm tasks={availableTasks || []} />
+          <div className="flex flex-col gap-6">
+            <GrantTaskAccessForm tasks={availableTasks || []} />
+            <ManualApproveForm />
+          </div>
+        </div>
+      </section>
       {/* Users Section */}
       <section>
         <h2 className="text-2xl font-bold border-b pb-2 mb-6">Registered Candidates (Onboarding)</h2>

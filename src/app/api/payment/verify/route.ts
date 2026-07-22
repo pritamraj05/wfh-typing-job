@@ -26,20 +26,39 @@ export async function POST(req: Request) {
     }
 
     // Update user in Supabase to grant access bypassing RLS
-    let updateData: any = { updated_at: new Date().toISOString() };
-    if (type === "premium_task") {
-      updateData.has_free_premium_task = true;
+    if (type === "task_activation" && body.taskId) {
+      // Grant dynamic task access
+      const { data: user } = await supabaseAdmin
+        .from("users")
+        .select("id")
+        .eq("clerk_id", userId)
+        .single();
+        
+      if (user) {
+        const { error: dbError } = await supabaseAdmin
+          .from("user_task_access")
+          .upsert({ user_id: user.id, task_id: body.taskId, granted_by: 'payment' }, { onConflict: 'user_id,task_id' });
+          
+        if (dbError) console.error("Supabase Error after payment (task_access):", dbError);
+      }
     } else {
-      updateData.has_paid = true;
-    }
-
-    const { error: dbError } = await supabaseAdmin
-      .from("users")
-      .upsert({ id: userId, ...updateData });
-
-    if (dbError) {
-      console.error("Supabase Error after payment:", dbError);
-      // Even if DB fails, payment succeeded. We should log this carefully in production.
+      // Platform fee or old logic
+      let updateData: any = { updated_at: new Date().toISOString() };
+      if (type === "premium_task") {
+        updateData.has_free_premium_task = true;
+      } else {
+        updateData.has_paid = true;
+      }
+  
+      const { error: dbError } = await supabaseAdmin
+        .from("users")
+        .update(updateData)
+        .eq("clerk_id", userId);
+  
+      if (dbError) {
+        console.error("Supabase Error after payment:", dbError);
+        // Even if DB fails, payment succeeded. We should log this carefully in production.
+      }
     }
 
     return NextResponse.json({ success: true }, { status: 200 });

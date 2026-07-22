@@ -93,6 +93,8 @@ export default function Workspace() {
             
             <a 
               href={`mailto:${task?.submission_email || "info.microdesk@gmail.com"}?subject=${encodeURIComponent(`${task?.title || "Task"} Submission - Ref: ${refCode}`)}&body=${encodeURIComponent(`Hello Admin,\n\nHere is my completed document for the Typing Task.\n\nMy Reference Code: ${refCode}\n\n[PLEASE ATTACH YOUR COMPLETED FILE HERE]\n\nThank you.`)}`}
+              target="_blank"
+              rel="noreferrer"
               className="flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 rounded-xl font-bold transition-all shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95"
             >
               <Mail className="w-5 h-5" /> Submit via Email

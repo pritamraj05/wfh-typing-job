@@ -16,12 +16,12 @@ export default function Workspace() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Generate a short reference code based on user ID or random
-    if (user) {
-      const code = `TASK-${user.id.slice(-6).toUpperCase()}-${Math.floor(Math.random() * 1000)}`;
+    // Generate a fixed reference code based on user ID and task ID (no random numbers)
+    if (user && taskId) {
+      const code = `TASK-${user.id.slice(-4).toUpperCase()}-${taskId.slice(0,4).toUpperCase()}`;
       setRefCode(code);
     }
-  }, [user]);
+  }, [user, taskId]);
 
   useEffect(() => {
     if (taskId) {
@@ -37,6 +37,14 @@ export default function Workspace() {
   if (loading) {
     return <div className="p-8 flex justify-center items-center min-h-screen"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>;
   }
+
+  // Generate safe URLs for Gmail and Mailto
+  const emailAddress = task?.submission_email || "info.microdesk@gmail.com";
+  const subject = `${task?.title || "Task"} Submission - Ref: ${refCode}`;
+  const body = `Hello Admin,\n\nHere is my completed document for the Typing Task.\n\nMy Reference Code: ${refCode}\n\n[PLEASE ATTACH YOUR COMPLETED FILE HERE]\n\nThank you.`;
+  
+  // Gmail Compose Link (Very reliable fallback for desktops)
+  const gmailLink = `https://mail.google.com/mail/?view=cm&fs=1&to=${emailAddress}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
   return (
     <div className="min-h-screen p-8 flex items-center justify-center bg-background">
@@ -92,7 +100,7 @@ export default function Workspace() {
             )}
             
             <a 
-              href={`mailto:${task?.submission_email || "info.microdesk@gmail.com"}?subject=${encodeURIComponent(`${task?.title || "Task"} Submission - Ref: ${refCode}`)}&body=${encodeURIComponent(`Hello Admin,\n\nHere is my completed document for the Typing Task.\n\nMy Reference Code: ${refCode}\n\n[PLEASE ATTACH YOUR COMPLETED FILE HERE]\n\nThank you.`)}`}
+              href={gmailLink}
               target="_blank"
               rel="noreferrer"
               className="flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 rounded-xl font-bold transition-all shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95"

@@ -34,13 +34,6 @@ export default function Workspace() {
     }
   }, [taskId]);
 
-  const handleEmailSubmit = () => {
-    const email = task?.submission_email || "info.microdesk@gmail.com";
-    const subject = encodeURIComponent(`${task?.title || "Task"} Submission - Ref: ${refCode}`);
-    const body = encodeURIComponent(`Hello Admin,\n\nHere is my completed document for the Typing Task.\n\nMy Reference Code: ${refCode}\n\n[PLEASE ATTACH YOUR COMPLETED FILE HERE]\n\nThank you.`);
-    window.open(`mailto:${email}?subject=${subject}&body=${body}`);
-  };
-
   if (loading) {
     return <div className="p-8 flex justify-center items-center min-h-screen"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>;
   }
@@ -98,12 +91,12 @@ export default function Workspace() {
               </button>
             )}
             
-            <button 
-              onClick={handleEmailSubmit}
+            <a 
+              href={`mailto:${task?.submission_email || "info.microdesk@gmail.com"}?subject=${encodeURIComponent(`${task?.title || "Task"} Submission - Ref: ${refCode}`)}&body=${encodeURIComponent(`Hello Admin,\n\nHere is my completed document for the Typing Task.\n\nMy Reference Code: ${refCode}\n\n[PLEASE ATTACH YOUR COMPLETED FILE HERE]\n\nThank you.`)}`}
               className="flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 rounded-xl font-bold transition-all shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95"
             >
               <Mail className="w-5 h-5" /> Submit via Email
-            </button>
+            </a>
           </div>
         </div>
       </div>
